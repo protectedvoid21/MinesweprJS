@@ -1,0 +1,33 @@
+body {
+    background-color: #222222;
+}
+
+.container {
+    width: 80vh;
+    height: 80vh;
+    margin: 0 auto;
+}
+
+.game-header {
+    background-color: green;
+    height: 10%;
+}
+
+.block-container {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(10, 10%);
+    grid-template-rows: repeat(10, 10%);
+}
+
+.block {
+    display: inline-block;
+    background-color: #333333;
+    width: inherit;
+    height: inherit;
+}
+
+.block:hover {
+    background-color: #555555;
+}
