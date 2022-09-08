@@ -1,7 +1,7 @@
-class Block {
-    constructor(x, y, isMine, isClicked) {
-        this.x = x
-        this.y = y
+export class Block {
+    number
+
+    constructor(isMine, isClicked) {
         this.isMine = isMine
         this.isClicked = isClicked
     }
