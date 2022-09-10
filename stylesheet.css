@@ -22,12 +22,21 @@ body {
 }
 
 .block {
+    font-size: 2em;
+    font-weight: bolder;
+    text-align: center;
+    line-height: 55px;
     display: inline-block;
     background-color: #333333;
     width: inherit;
     height: inherit;
+    user-select: none;
 }
 
 .block:hover {
     background-color: #555555;
+}
+
+.block-clicked {
+    background-color: #777777;
 }

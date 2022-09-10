@@ -1,5 +1,7 @@
 import { Block } from './block.js'
 
+const blockContainer = document.querySelector('.block-container')
+
 export class Game {
     #width
     #height
@@ -19,17 +21,20 @@ export class Game {
         while(leftBombs > 0) {
             const randomX = Math.floor(Math.random() * this.#width)
             const randomY = Math.floor(Math.random() * this.#height)
+            
+            if(this.#blocks[randomX][randomY].isMine) {
+                continue
+            }
 
             if(!(randomX === x && randomY === y)) {
                 this.#blocks[randomX][randomY].isMine = true
+                this.incrementNumbersAround(randomX, randomY)
                 leftBombs--
             }
         }
-        this.reveal(x, y)
     }
 
     generateMap() {
-        const blockContainer = document.querySelector('.block-container')
         const block = document.createElement('div')
         block.classList.add('block')
         block.textContent = String.fromCharCode(160)
@@ -44,7 +49,7 @@ export class Game {
 
         for(let x = 0; x < this.#width; x++) {
             for(let y = 0; y < this.#height; y++) {
-                blockContainer.children[y * this.#width + x].addEventListener('click', this.reveal(x, y))                
+                blockContainer.children[y * this.#width + x].addEventListener('click', () => this.reveal(x, y))               
             }
         }
     }
@@ -64,32 +69,38 @@ export class Game {
             if(y > 0) {
                 this.#blocks[x + 1][y - 1].number++
             }
-            if(y < height - 1) {
+            if(y < this.#height - 1) {
                 this.#blocks[x + 1][y + 1].number++
             }
         }
         if(y > 0) {
-            this.#blocks[x, y - 1].number++
+            this.#blocks[x][y - 1].number++
         }
         if(y < this.#height - 1) {
-            this.#blocks[x, y - 1].number++
+            this.#blocks[x][y + 1].number++
         }
     }
 
-    reveal(x, y) {
-        if(this.#started === false) {
-            this.#started = true    
-            this.firstReveal(x, y)
+    reveal(x, y) {  
+        if(this.#blocks[x][y].isClicked) {
             return
+        }
+        this.#blocks[x][y].isClicked = true
+
+        const block = blockContainer.children[y * this.#width + x]
+        block.classList.add('block-clicked')
+
+        if(this.#started === false) {
+            this.#started = true
+            this.firstReveal(x, y)  
         }
 
-        console.log(this.#blocks[x][y].isMine)
         if(this.#blocks[x][y].isMine === true) {
-            console.log('You lost')
+            block.textContent = 'X'
             return
         }
-        if(this.#blocks[x][y].isNumber > 0) {
-            this.#blocks[x][y].isClicked = true
+        if(this.#blocks[x][y].number > 0) {
+            block.textContent = this.#blocks[x][y].number
             return
         }
 
