@@ -18,6 +18,8 @@ export class Game {
     firstReveal(x, y) {
         let leftBombs = this.#bombCount
 
+        const blocksAround = this.getAroundBlocksList(x, y)
+
         while(leftBombs > 0) {
             const randomX = Math.floor(Math.random() * this.#width)
             const randomY = Math.floor(Math.random() * this.#height)
@@ -26,11 +28,21 @@ export class Game {
                 continue
             }
 
-            if(!(randomX === x && randomY === y)) {
-                this.#blocks[randomX][randomY].isMine = true
-                this.incrementNumbersAround(randomX, randomY)
-                leftBombs--
+            let isAround = false
+            for(const block of blocksAround) {
+                if(block[0] === randomX && block[1] === randomY) {
+                    isAround = true
+                    break
+                }
             }
+
+            if(isAround) {
+                continue
+            }
+
+            this.#blocks[randomX][randomY].isMine = true
+            this.incrementNumbersAround(randomX, randomY)
+            leftBombs--
         }
     }
 
@@ -49,7 +61,7 @@ export class Game {
 
         for(let x = 0; x < this.#width; x++) {
             for(let y = 0; y < this.#height; y++) {
-                blockContainer.children[y * this.#width + x].addEventListener('click', (event) => {
+                blockContainer.children[y * this.#width + x].addEventListener('mouseup', (event) => {
                     if(event.button == 0) {
                         this.reveal(x, y)
                     }
@@ -59,6 +71,38 @@ export class Game {
                 })               
             }
         }
+    }
+
+    getAroundBlocksList(x, y) {
+        const blocksList = []
+        blocksList.push([x, y])
+
+        if(x > 0) {
+            blocksList.push([x - 1, y])
+            if(y > 0) {
+                blocksList.push([x - 1, y - 1])
+            } 
+            if(y < this.#height - 1) {
+                blocksList.push([x - 1, y + 1])
+            }
+        }
+        if(x < this.#width - 1) {
+            blocksList.push(x + 1, y)
+            if(y > 0) {
+                blocksList.push(x + 1, y - 1)
+            }
+            if(y < this.#height - 1) {
+                blocksList.push(x + 1, y + 1)
+            }
+        }
+        if(y > 0) {
+            blocksList.push([x, y - 1])
+        }
+        if(y < this.#height - 1) {
+            blocksList.push([x, y + 1])
+        }
+        
+        return blocksList
     }
 
     incrementNumbersAround(x, y) {
@@ -93,7 +137,7 @@ export class Game {
     }
 
     reveal(x, y) {  
-        if(this.#blocks[x][y].isClicked) {
+        if(this.#blocks[x][y].isClicked || this.#blocks[x][y].isFlagged) {
             return
         }
         this.#blocks[x][y].isClicked = true
@@ -142,7 +186,15 @@ export class Game {
     }
 
     flag(x, y) {
-        this.#blocks[x][y].isFlagged = true
-        this.getHtmlBlock(x, y).style.backgroundImage = 'url(images/flag.png)'
+        const htmlBlock = this.getHtmlBlock(x, y)
+        const isFlagged = this.#blocks[x][y].isFlagged
+
+        this.#blocks[x][y].isFlagged = !this.#blocks[x][y].isFlagged
+        
+        if(isFlagged) {
+            htmlBlock.style.backgroundImage = 'url(images/block.png)'
+            return
+        }
+        htmlBlock.style.backgroundImage = 'url(images/flag.png'
     }
 }
