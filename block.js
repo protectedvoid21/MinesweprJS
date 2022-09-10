@@ -1,7 +1,8 @@
 export class Block {
-    constructor(isMine, isClicked) {
-        this.isMine = isMine
-        this.isClicked = isClicked
+    constructor() {
+        this.isMine = false
+        this.isClicked = false
+        this.isFlagged = false
         this.number = 0
     }
 }

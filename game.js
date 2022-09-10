@@ -49,7 +49,14 @@ export class Game {
 
         for(let x = 0; x < this.#width; x++) {
             for(let y = 0; y < this.#height; y++) {
-                blockContainer.children[y * this.#width + x].addEventListener('click', () => this.reveal(x, y))               
+                blockContainer.children[y * this.#width + x].addEventListener('click', (event) => {
+                    if(event.button == 0) {
+                        this.reveal(x, y)
+                    }
+                    else if(event.button == 2) {
+                        this.flag(x, y)
+                    }
+                })               
             }
         }
     }
@@ -81,13 +88,17 @@ export class Game {
         }
     }
 
+    getHtmlBlock(x, y) {
+        return blockContainer.children[y * this.#width + x]
+    }
+
     reveal(x, y) {  
         if(this.#blocks[x][y].isClicked) {
             return
         }
         this.#blocks[x][y].isClicked = true
 
-        const block = blockContainer.children[y * this.#width + x]
+        const block = this.getHtmlBlock(x, y)
         block.classList.add('block-clicked')
 
         if(this.#started === false) {
@@ -96,11 +107,11 @@ export class Game {
         }
 
         if(this.#blocks[x][y].isMine === true) {
-            block.textContent = 'X'
+            block.style.backgroundImage = 'url(images/mine.png)'
             return
         }
         if(this.#blocks[x][y].number > 0) {
-            block.textContent = this.#blocks[x][y].number
+            block.style.backgroundImage = `url(images/${this.#blocks[x][y].number}.png)`
             return
         }
 
@@ -128,5 +139,10 @@ export class Game {
         if(y < this.#height - 1) {
             this.reveal(x, y + 1) //DOWN
         }
+    }
+
+    flag(x, y) {
+        this.#blocks[x][y].isFlagged = true
+        this.getHtmlBlock(x, y).style.backgroundImage = 'url(images/flag.png)'
     }
 }
