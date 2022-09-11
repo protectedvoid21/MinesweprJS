@@ -20,7 +20,7 @@ export class Game {
     }
 
     firstReveal(x, y) {
-        this.#timer.resetTimer()
+        this.#timer.start()
 
         let leftBombs = this.#bombCount
         const blocksAround = this.getAroundBlocksList(x, y)
@@ -83,6 +83,7 @@ export class Game {
         this.#blocks = []
         this.#started = false
         this.generateMap()
+        this.#timer.reset()
     }
 
     getAroundBlocksList(x, y) {

@@ -1,19 +1,26 @@
 export class Timer {
     #time = 0
     #timerText
+    #repeat
 
     constructor(timerText) {
         this.#timerText = timerText
     }
 
-    resetTimer() {
-        this.#timerText.textContent = this.formatText()
-        const repeat = setInterval(() => {
-            this.updateTimer()
+    start() {
+        this.#repeat = setInterval(() => {
+            this.update()
         }, 1000)
     }
 
-    updateTimer() {
+    reset() {
+        this.#time = 0
+        this.#timerText.textContent = this.formatText()
+
+        clearInterval(this.#repeat)
+    }
+
+    update() {
         this.#time++
         this.#timerText.textContent = this.formatText()   
     }
