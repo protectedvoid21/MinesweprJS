@@ -8,9 +8,35 @@ body {
     margin: 0 auto;
 }
 
+@font-face {
+    font-family: SevenSegment;
+    src: url(Seven_Segment.ttf);
+}
+
 .game-header {
-    background-color: green;
-    height: 10%;
+    background-color: #999999;
+    height: 15%;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.time-counter {
+    font-weight: bold;
+    font-size: 80px;
+    font-family: SevenSegment;
+}
+
+.remaining-mines {
+    font-weight: bold;
+    font-family: SevenSegment;
+    font-size: 80px;
+}
+
+.reset-button {
+    height: 90%;
+    image-rendering: pixelated;
+    cursor: pointer;
 }
 
 .block-container {

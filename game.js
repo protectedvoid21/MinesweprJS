@@ -1,5 +1,8 @@
 import { Block } from './block.js'
+import { Timer } from './timer.js'
 
+const timeText = document.querySelector('.time-counter')
+const remainingMinesText = document.querySelector('.remaining-mines')
 const blockContainer = document.querySelector('.block-container')
 
 export class Game {
@@ -8,6 +11,7 @@ export class Game {
     #bombCount
     #started = false
     #blocks = []
+    #timer = new Timer(timeText)
 
     constructor(width, height, bombCount) {
         this.#width = width
@@ -16,8 +20,9 @@ export class Game {
     }
 
     firstReveal(x, y) {
-        let leftBombs = this.#bombCount
+        this.#timer.resetTimer()
 
+        let leftBombs = this.#bombCount
         const blocksAround = this.getAroundBlocksList(x, y)
 
         while(leftBombs > 0) {
@@ -73,6 +78,13 @@ export class Game {
         }
     }
 
+    reset() {
+        blockContainer.replaceChildren()
+        this.#blocks = []
+        this.#started = false
+        this.generateMap()
+    }
+
     getAroundBlocksList(x, y) {
         const blocksList = []
         blocksList.push([x, y])
@@ -87,12 +99,12 @@ export class Game {
             }
         }
         if(x < this.#width - 1) {
-            blocksList.push(x + 1, y)
+            blocksList.push([x + 1, y])
             if(y > 0) {
-                blocksList.push(x + 1, y - 1)
+                blocksList.push([x + 1, y - 1])
             }
             if(y < this.#height - 1) {
-                blocksList.push(x + 1, y + 1)
+                blocksList.push([x + 1, y + 1])
             }
         }
         if(y > 0) {
