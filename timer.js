@@ -15,6 +15,10 @@ export class Timer {
         }, 1000)
     }
 
+    stop() {
+        clearInterval(this.#repeat)
+    }
+
     reset() {
         this.#time = 0
         this.#timerText.textContent = formatText(this.#time)

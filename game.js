@@ -14,6 +14,7 @@ export class Game {
     #started = false
     #blocks = []
     #timer = new Timer(timeText)
+    #gameLost = false
 
     constructor(width, height, bombCount) {
         this.#width = width
@@ -70,6 +71,10 @@ export class Game {
         for(let x = 0; x < this.#width; x++) {
             for(let y = 0; y < this.#height; y++) {
                 blockContainer.children[y * this.#width + x].addEventListener('mouseup', (event) => {
+                    if(this.#gameLost) {
+                        return
+                    }
+
                     if(event.button == 0) {
                         this.reveal(x, y)
                     }
@@ -85,8 +90,25 @@ export class Game {
         blockContainer.replaceChildren()
         this.#blocks = []
         this.#started = false
+        this.#gameLost = false
         this.generateMap()
         this.#timer.reset()
+    }
+
+    gameOver() {
+        for(let x = 0; x < this.#width; x++) {
+            for(let y = 0; y < this.#height; y++) {
+                if(this.#blocks[x][y].isMine) {
+                    const htmlBlock = this.getHtmlBlock(x, y)
+                    htmlBlock.style.backgroundImage = 'url(images/mine.png)'
+                    htmlBlock.classList.add('block-clicked')
+                    this.#blocks[x][y].isClicked = true
+                }
+            }
+        }
+
+        this.#timer.stop()
+        this.#gameLost = true
     }
 
     getAroundBlocksList(x, y) {
@@ -152,7 +174,7 @@ export class Game {
         return blockContainer.children[y * this.#width + x]
     }
 
-    reveal(x, y) {  
+    reveal(x, y) {
         if(this.#blocks[x][y].isClicked || this.#blocks[x][y].isFlagged) {
             return
         }
@@ -167,7 +189,7 @@ export class Game {
         }
 
         if(this.#blocks[x][y].isMine === true) {
-            block.style.backgroundImage = 'url(images/mine.png)'
+            this.gameOver()
             return
         }
         if(this.#blocks[x][y].number > 0) {
