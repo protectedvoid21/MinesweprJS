@@ -1,5 +1,6 @@
 import { Block } from './block.js'
 import { Timer } from './timer.js'
+import { formatText } from './formatText.js'
 
 const timeText = document.querySelector('.time-counter')
 const remainingMinesText = document.querySelector('.remaining-mines')
@@ -8,6 +9,7 @@ const blockContainer = document.querySelector('.block-container')
 export class Game {
     #width
     #height
+    #remainingMines
     #bombCount
     #started = false
     #blocks = []
@@ -22,6 +24,7 @@ export class Game {
     firstReveal(x, y) {
         this.#timer.start()
 
+        this.#remainingMines = this.#bombCount 
         let leftBombs = this.#bombCount
         const blocksAround = this.getAroundBlocksList(x, y)
 
@@ -199,6 +202,10 @@ export class Game {
     }
 
     flag(x, y) {
+        if(this.#blocks[x][y].isClicked) {
+            return
+        }
+
         const htmlBlock = this.getHtmlBlock(x, y)
         const isFlagged = this.#blocks[x][y].isFlagged
 
@@ -206,8 +213,12 @@ export class Game {
         
         if(isFlagged) {
             htmlBlock.style.backgroundImage = 'url(images/block.png)'
+            this.#remainingMines++
+            remainingMinesText.textContent = formatText(this.#remainingMines)
             return
         }
-        htmlBlock.style.backgroundImage = 'url(images/flag.png'
+        this.#remainingMines--
+        remainingMinesText.textContent = formatText(this.#remainingMines)
+        htmlBlock.style.backgroundImage = 'url(images/flag.png)'
     }
 }

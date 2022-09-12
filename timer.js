@@ -1,3 +1,5 @@
+import { formatText } from "./formatText.js"
+
 export class Timer {
     #time = 0
     #timerText
@@ -15,23 +17,13 @@ export class Timer {
 
     reset() {
         this.#time = 0
-        this.#timerText.textContent = this.formatText()
+        this.#timerText.textContent = formatText(this.#time)
 
         clearInterval(this.#repeat)
     }
 
     update() {
         this.#time++
-        this.#timerText.textContent = this.formatText()   
-    }
-
-    formatText() {
-        if(this.#time < 10) {
-            return '00' + this.#time
-        }
-        else if(this.#time < 100) {
-            return '0' + this.#time
-        }
-        return this.#time
+        this.#timerText.textContent = formatText(this.#time)   
     }
 }
