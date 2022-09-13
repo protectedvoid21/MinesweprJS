@@ -29,8 +29,8 @@ body {
 
 .remaining-mines {
     font-weight: bold;
-    font-family: SevenSegment;
     font-size: 80px;
+    font-family: SevenSegment;
 }
 
 .reset-button {
@@ -48,6 +48,8 @@ body {
 }
 
 .block {
+    width: inherit;
+    height: inherit;
     font-size: 2em;
     font-weight: bolder;
     text-align: center;
@@ -57,8 +59,6 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     image-rendering: pixelated;
-    width: inherit;
-    height: inherit;
     user-select: none;
 }
 

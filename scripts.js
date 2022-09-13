@@ -4,7 +4,7 @@ window.addEventListener('contextmenu', (event) => {
     event.preventDefault()
 })
 
-let game = new Game(10, 10, 10)
+let game = new Game(10, 10, 15)
 document.querySelector('.reset-button').addEventListener('click', () => {
     game.reset()
 })

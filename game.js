@@ -10,11 +10,12 @@ export class Game {
     #width
     #height
     #remainingMines
+    #undiscoveredBlocks
     #bombCount
     #started = false
     #blocks = []
     #timer = new Timer(timeText)
-    #gameLost = false
+    #stopped = false
 
     constructor(width, height, bombCount) {
         this.#width = width
@@ -24,7 +25,6 @@ export class Game {
 
     firstReveal(x, y) {
         this.#timer.start()
-
         this.#remainingMines = this.#bombCount 
         let leftBombs = this.#bombCount
         const blocksAround = this.getAroundBlocksList(x, y)
@@ -56,6 +56,9 @@ export class Game {
     }
 
     generateMap() {
+        this.#undiscoveredBlocks = this.#width * this.#height
+        remainingMinesText.textContent = formatText(this.#bombCount)
+
         const block = document.createElement('div')
         block.classList.add('block')
         block.textContent = String.fromCharCode(160)
@@ -64,14 +67,14 @@ export class Game {
             this.#blocks[x] = []
             for(let y = 0; y < this.#height; y++) {
                 blockContainer.appendChild(block.cloneNode())
-                this.#blocks[x][y] = new Block(false, false)
+                this.#blocks[x][y] = new Block()
             }
         }
 
         for(let x = 0; x < this.#width; x++) {
             for(let y = 0; y < this.#height; y++) {
                 blockContainer.children[y * this.#width + x].addEventListener('mouseup', (event) => {
-                    if(this.#gameLost) {
+                    if(this.#stopped) {
                         return
                     }
 
@@ -90,7 +93,7 @@ export class Game {
         blockContainer.replaceChildren()
         this.#blocks = []
         this.#started = false
-        this.#gameLost = false
+        this.#stopped = false
         this.generateMap()
         this.#timer.reset()
     }
@@ -107,8 +110,15 @@ export class Game {
             }
         }
 
+        remainingMinesText.textContent = 'Game over'
         this.#timer.stop()
-        this.#gameLost = true
+        this.#stopped = true
+    }
+
+    win() {
+        this.#stopped = true
+        this.#timer.stop()
+        remainingMinesText.textContent = 'You won'
     }
 
     getAroundBlocksList(x, y) {
@@ -192,10 +202,22 @@ export class Game {
             this.gameOver()
             return
         }
+
+        this.#undiscoveredBlocks--
         if(this.#blocks[x][y].number > 0) {
             block.style.backgroundImage = `url(images/${this.#blocks[x][y].number}.png)`
+            if(this.#undiscoveredBlocks === this.#bombCount) {
+                this.win()
+                return
+            }
             return
         }
+
+        if(this.#undiscoveredBlocks === this.#bombCount) {
+            this.win()
+            return
+        }
+        
 
         if(x > 0) {
             this.reveal(x - 1, y) //LEFT
